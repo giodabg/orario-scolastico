@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Aule>
+    <Aula id="AUL - 101">
+        <Nome>Aula 1</Nome>
+        <Posti>25</Posti>
+        <Tipo>AULA_STANDARD</Tipo>
+    </Aula>
+    <Aula id="AUL - 204">
+        <Nome>Lab Info</Nome>
+        <Posti>30</Posti>
+        <Tipo>AULA_DEDICATA</Tipo>
+    </Aula>
+</Aule>
