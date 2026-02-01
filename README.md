@@ -247,7 +247,7 @@ Per la condivisione dei dati verrà utilizzato il formato XML. Per evitare dupli
 
 ```xml
 <Orari>
-  <Orario id="OR-001">
+  <Orario id="ORA-001">
     <Nome>Orario provvisorio 2025/26</Nome>
 
     <Lezioni>
