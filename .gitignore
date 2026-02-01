@@ -39,3 +39,14 @@
 
 # debug information files
 *.dwo
+
+# Visual Studio
+.vs/
+**/Debug/
+**/Release/
+**/x64/
+**/x86/
+**/*.user
+**/*.suo
+**/*.VC.db
+**/*.VC.VC.opendb
