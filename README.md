@@ -336,7 +336,7 @@ Per la condivisione dei dati verrà utilizzato il formato XML. Per evitare dupli
 
 ---
 
-# Regole operative 
+# Regole 
 
 Per evitare incoerenze:
 
@@ -350,7 +350,7 @@ Per evitare incoerenze:
 
 3. **Coda FIFO = ordine nel file**
 
-   * in `proposte.xml` l’ordine delle entità `<Proposta>` dentro `<Coda>` è FIFO.
+   * in `proposte.xml` l’ordine delle entità `<Proposta>` dentro `<Coda>` è FIFO ossia prima vengono quelle inserite per prime e poi le altre.
 
 ---
 
