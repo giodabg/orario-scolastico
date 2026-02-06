@@ -1,20 +1,33 @@
 #pragma once
+
+#include <iostream>
 #include <string>
 
 using namespace std;
+
 class Utente {
 protected:
-    int id;                 
-    string nome;            
-    string cognome;         
-    string username;        
-    string password;        
-public:
-    virtual string getTipoUtente() = 0;
-    virtual void toCSV()=0;
-    virtual void fromCSV(string csvLine)=0;
-    virtual string toXML() = 0;
-    virtual void fromXml(string xmlLine)=0;
-    virtual void toString() = 0;
-};
+    string id;                 // Identificativo univoco (es. "STU-050")
+    string nome;               // Nome dell'utente
+    string cognome;            // Cognome dell'utente
+    string username;           // Nome utente per il login
+    string password;           // Password per il login
 
+public:
+    // Restituisce il tipo di utente (es. "STUDENTE", "DOCENTE")
+    virtual string getTipoUtente() = 0;
+
+    // Restituisce una rappresentazione testuale leggibile dell'oggetto
+    virtual string toString() = 0;
+
+    // Converte l'oggetto in una stringa in formato CSV
+    virtual string toCSV() = 0;
+
+    // Ricostruisce l'oggetto a partire da una stringa CSV
+    virtual void fromCSV(string riga) = 0;
+
+    string toXML();
+
+    // Ricostruisce l'oggetto a partire da un frammento XML
+    virtual void fromXML(string xml) = 0;
+};
