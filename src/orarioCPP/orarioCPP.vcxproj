@@ -127,6 +127,7 @@
     <ClCompile Include="Aule.cpp" />
     <ClCompile Include="libUtils.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="testAule.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>

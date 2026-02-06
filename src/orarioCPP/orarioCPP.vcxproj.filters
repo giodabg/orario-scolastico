@@ -24,10 +24,13 @@
     <ClCompile Include="libUtils.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="testAule.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
     <ClCompile Include="tinyxml2.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
   </ItemGroup>
