@@ -127,15 +127,19 @@
     <ClCompile Include="Aule.cpp" />
     <ClCompile Include="libUtils.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Studente.cpp" />
     <ClCompile Include="testAule.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
+    <ClCompile Include="Utente.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Aula.h" />
     <ClInclude Include="Aule.h" />
     <ClInclude Include="ContenitoreXML.h" />
     <ClInclude Include="libUtils.h" />
+    <ClInclude Include="Studente.h" />
     <ClInclude Include="tinyxml2.h" />
+    <ClInclude Include="Utente.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="resources\aule.xml" />

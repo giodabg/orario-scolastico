@@ -8,7 +8,6 @@
 
 class Aule : public ContenitoreXML {
 private:
-    map<int, Aula*> byId;
     vector<Aula*> items;
 
 public:
@@ -21,7 +20,7 @@ public:
     void clear() override;
     size_t size() const override;
 
-    bool validateUniqueIds() const;
+    bool esisteId(int id) const;
 
     string toString() const;
 };

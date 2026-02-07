@@ -20,4 +20,15 @@
       <MateriaRef id="MAT-002"/>
     </MaterieAmmesse>
   </Aula>
+
+<Aula id="AUL-101">
+	<Nome>Aula 1</Nome>
+	<Posti>25</Posti>
+	<Tipo>AULA_STANDARD</Tipo>
+
+	<MaterieAmmesse>
+		<MateriaRef id="MAT-001"/>
+		<MateriaRef id="MAT-003"/>
+	</MaterieAmmesse>
+</Aula>
 </Aule>

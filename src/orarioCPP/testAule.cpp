@@ -10,7 +10,7 @@ using namespace std;
 using namespace tinyxml2;
 
 // -----------------------------------------------------------------------------
-// Funzioni richieste
+// Funzioni per testare funzionamento metodi di Aule, con interazione da console
 // -----------------------------------------------------------------------------
 static void funzioneCarica(Aule& aule) {
     cout << "\nNome file da caricare (es. aule.xml): ";
@@ -82,7 +82,7 @@ int testAule() {
 
         int scelta = -1;
         try {
-            scelta = atoi(sceltaStr.c_str()); // tradizionale
+            scelta = atoi(sceltaStr.c_str());
         }
         catch (...) {
             scelta = -1;

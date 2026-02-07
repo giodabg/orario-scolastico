@@ -10,43 +10,28 @@ Aule::~Aule() {
 }
 
 void Aule::clear() {
-    // dealloca tutte le aule possedute dal contenitore
+    // dealloca tutti gli items possedute dal contenitore
     for (size_t i = 0; i < items.size(); ++i) {
         delete items[i];
     }
     items.clear();
-    byId.clear();
 }
 
 size_t Aule::size() const {
     return items.size();
 }
 
-bool Aule::validateUniqueIds() const {
-    // Controllo semplice: se byId ha la stessa cardinalità di items non ci sono duplicati.
-    // (Vale se byId è popolata coerentemente con items)
-    if (byId.size() != items.size()) {
-        return false;
-    }
+// Controlla che id non sia duplicato
+bool Aule::esisteId(int id) const {
 
-    // Controllo più “esplicito” e tradizionale
-    map<int, int> occorrenze;
-    for (size_t i = 0; i < items.size(); ++i) {
-        if (items[i] == 0) return false;
-        int id = items[i]->getId();
-        if (occorrenze.find(id) == occorrenze.end()) {
-            occorrenze[id] = 1;
-        }
-        else {
-            occorrenze[id] = occorrenze[id] + 1;
+    // Controlla se l'id è già presente
+    bool trovato = false;
+    for (size_t j = 0; j < items.size(); ++j) {
+        if (items[j]->getId() == id) {
+            return true;  // Duplicato trovato
         }
     }
-
-    for (map<int, int>::const_iterator it = occorrenze.begin(); it != occorrenze.end(); ++it) {
-        if (it->second != 1) return false;
-    }
-
-    return true;
+    return false;
 }
 
 bool Aule::loadFromFile(const string& path) {
@@ -67,35 +52,33 @@ bool Aule::loadFromFile(const string& path) {
     }
 
     XMLElement* aulaElem = root->FirstChildElement("Aula");
-    while (aulaElem != 0) {
+    while (aulaElem != nullptr) {
         Aula* a = Aula::fromXML(aulaElem);
-        if (a == 0) {
+        if (a == nullptr) {
             cerr << "Warning loadFromFile(Aule): nodo <Aula> non valido, scartato\n";
+			// passo al prossimo nodo <Aula>
             aulaElem = aulaElem->NextSiblingElement("Aula");
+			// continua con il prossimo ciclo, senza aggiungere nulla al contenitore
             continue;
         }
 
         int id = a->getId();
 
         // gestisci duplicati
-        if (byId.find(id) != byId.end()) {
+        if (esisteId(id)) {
             cerr << "Warning loadFromFile(Aule): ID duplicato (" << id << "), scarto\n";
+			// cancello l'oggetto appena creato, che non sarà aggiunto al contenitore
             delete a;
+			// passo al prossimo nodo <Aula>
             aulaElem = aulaElem->NextSiblingElement("Aula");
-            continue;
         }
+        else {
+			// ID univoco, posso aggiungere al contenitore
+            items.push_back(a);
 
-        byId[id] = a;
-        items.push_back(a);
-
-        aulaElem = aulaElem->NextSiblingElement("Aula");
-    }
-
-    // opzionale: se vuoi essere “rigido”, qui puoi fallire se non è valido
-    if (!validateUniqueIds()) {
-        cerr << "Errore loadFromFile(Aule): rilevati ID duplicati o dati incoerenti\n";
-        clear();
-        return false;
+            // passo al prossimo nodo <Aula>
+            aulaElem = aulaElem->NextSiblingElement("Aula");
+        }
     }
 
     return true;
@@ -112,12 +95,6 @@ bool Aule::loadFromFile(const string& path) {
 // </Aule>
 // ------------------------------------------------------
 bool Aule::saveToFile(const string& path) const {
-    // opzionale: controllo consistenza prima di salvare
-    if (!validateUniqueIds()) {
-        cerr << "Errore saveToFile(Aule): ID duplicati o indice incoerente\n";
-        return false;
-    }
-
     XMLDocument doc;
 
     // Dichiarazione XML
@@ -130,7 +107,7 @@ bool Aule::saveToFile(const string& path) const {
 
     // Contenuto
     for (size_t i = 0; i < items.size(); ++i) {
-        if (items[i] != 0) {
+        if (items[i] != nullptr) {
             XMLElement* aulaElem = items[i]->toXML(doc);
             root->InsertEndChild(aulaElem);
         }
@@ -158,7 +135,7 @@ bool Aule::saveToFileOld(const string& path) const {
     out << "<Aule>\n";
 
     for (size_t i = 0; i < items.size(); ++i) {
-        if (items[i] != 0) {
+        if (items[i] != nullptr) {
             out << "  " << items[i]->toXML() << "\n";
         }
     }
@@ -188,7 +165,7 @@ string Aule::toString() const {
     }
 
     for (size_t i = 0; i < items.size(); ++i) {
-        if (items[i] != 0) {
+        if (items[i] != nullptr) {
             s += items[i]->toString();
             s += "--------------------\n";
         }
