@@ -89,7 +89,7 @@ void Studente::fromXML(string xml) {
     if (start != string::npos) {
         start += 10;
         end = xml.find("</Password>", start);
-        this->password = xml.substr(start, end - start);
+        this->password = std::stoi(xml.substr(start, end - start)); //fatto in pullman da telefono, non sono sicuro sia giusto
     }
 
     //estraggo il tipo
@@ -107,4 +107,5 @@ void Studente::fromXML(string xml) {
         end = xml.find("\"", start);
         this->classeRef = xml.substr(start, end - start);
     }
+
 }
