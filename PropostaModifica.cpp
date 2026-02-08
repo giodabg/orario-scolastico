@@ -34,6 +34,13 @@ void PropostaModifica::fromXML(std::string nomeFile)
 {
 }
 
+public void toXML()
+{
+    StreamWriter sw = new StreamWriter(NomeFile, true);
+    myXML.Serialize(sw, Piatti);
+    sw.Close();
+}\
+
 bool PropostaModifica::checkConflitto()
 {
 	return false;

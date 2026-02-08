@@ -23,8 +23,9 @@ public:
     void toCSV();
     void fromCSV(std::string rigaCSV);
 
-    string toXML();
+    void toXML();
     void fromXML(std::string nomeFile);
+
 
     bool checkConflitto();
 };
