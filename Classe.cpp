@@ -22,9 +22,20 @@ class Classe {
         Classe(int id, string codice, int numeroStudenti, vector studenti, vector lezioni);
         ~Classe();
 
-        void aggiungiStudente(Studente* s); // Inserisce un nuovo studente (Awais Mohamed)
-        void rimuoviStudente(); // Rimuove uno studente (Debabia || Cristain Botezatu Madalin)
-        void associaLezione(Lezione* l); // Collega una lezione alla classe
+        // Inserisce un nuovo studente (Awais Mohamed)
+        void aggiungiStudente(Studente* s){          
+            studenti.add(s);
+            numeroStudenti++;
+        };     
+        // Rimuove uno studente (Debabia || Cristain Botezatu Madalin)
+        void rimuoviStudente(){
+                studenti.remove(s);
+                numeroStudenti--;
+        };                 
+        // Collega una lezione alla classe
+        void associaLezione(Lezione* l){
+            lezioni.add(l);
+        }; 
 
         void toString();
         void toCSV();

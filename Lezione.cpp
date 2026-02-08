@@ -20,11 +20,31 @@ class Lezione {
         Lezione(GiornoSettimana giorno, int ora, vector docenti, Classe* classe, Aula* aula, Materia* materia);
         ~Lezione();
 
-        bool Sovrapposta(const Lezione& altra) const; // Verifica se due lezioni nello stesso giorno occupano la stessa ora
-        void spostaLezione(string nuovoGiorno, int nuovaOra); // Sposta la lezione in un altra ora
-        void assegnaAula(string idNuovaAula); // Cambia l'aula della lezione
-        bool aggiungiDocente(Docente* d); // Aggiunge un docente
-        bool rimuoviDocente(string idDocente); // Rimuove un docente dalla lezione
+        // Verifica se due lezioni nello stesso giorno occupano la stessa ora
+        bool Sovrapposta(const Lezione& altra){
+            // Controlla se le lezioni sono nello stesso giorno e alla stessa ora
+            if (giorno == altra.giorno && ora == altra.ora) {
+                return true;
+            }
+            return false;
+        };             
+        // Sposta la lezione in un altra ora
+        void spostaLezione(std::string nuovoGiorno, int nuovaOra){
+            giorno.setGiorno(nuovoGiorno);
+            ora = nuovaOra;
+        };  
+        // Cambia l'aula della lezione
+        void assegnaAula(std::string idNuovaAula){
+            aula.setId(idNuovaAula);
+        };                  
+        // Aggiunge un docente
+        void aggiungiDocente(Docente* d){
+            docenti.add(d); // Aggiunge il docente alla lista
+        };                           
+        // Rimuove un docente dalla lezione
+        void rimuoviDocente(std::string idDocente){
+            docenti.delete(idDocente); 
+        };  
 
         void toString();
         void toCSV();
