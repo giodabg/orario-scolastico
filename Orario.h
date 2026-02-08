@@ -2,7 +2,7 @@
 #include <vector>
 #include <deque>
 #include <string>
-
+using namespace std;
 
 class Lezione;
 class PropostaModifica;
@@ -19,10 +19,10 @@ public:
     std::string toString();
 
     void toCSV();
-    void fromCSV(std::string rigaCSV);
+    void fromCSV(string rigaCSV);
 
     string toXML();
-    void fromXML();
+    void fromXML(string NomeFIle);
 
     void visualizzaOrarioDocente(Docente nomeDocente);
     void visualizzaOrarioAula(Aula idAula);
