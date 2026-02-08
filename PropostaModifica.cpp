@@ -1,4 +1,4 @@
-#include "PropostaModifica.h"
+si#include "PropostaModifica.h"
 #include "Orario.h"
 using namespace std;
 
@@ -26,8 +26,31 @@ string PropostaModifica::toXML()
     return xml;
 }
 
-void Orario::fromXML()
+void PropostaModifica::fromXML(string NomeFile)
 {
+        try
+        {
+            if (!File.Exists(NomeFile))
+            {
+                cout << NomeFile + " non trovato";
+                return;
+            }
+
+            using StreamReader sr = new StreamReader(NomeFile);
+            var risultato = myXML.Deserialize(sr) as List<PropostaModifica>;
+            if (risultato == null)
+            {
+                cout << "XML non valido";
+                return;
+            }
+
+            PropostaModifica = risultato;
+            refreshList();
+        }
+        catch (Exception ex)
+        {
+            cout << "ERRORE:\n" + ex.Message;
+        }
 }
 
 void PropostaModifica::fromXML(std::string nomeFile)
