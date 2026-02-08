@@ -21,11 +21,12 @@ public:
     void toCSV();
     void fromCSV(string rigaCSV);
 
-    string toXML();
+    void toXML();
     void fromXML(string NomeFIle);
 
     void visualizzaOrarioDocente(Docente nomeDocente);
     void visualizzaOrarioAula(Aula idAula);
     void visualizzaOrarioClasse(Classe idClasse);
     void controllaStatoProposteAttive();
+
 };
