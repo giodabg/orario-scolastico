@@ -3,8 +3,8 @@
 
 class Studente : public Utente {
 private:
-    string tipo;      // Specifica se normale o rappresentante
-    string classeRef; // Riferimento all'ID della classe (es. "CLA-3A")
+    string tipo;      //normale o rappresentante
+    int classeRef; //ID della classe (es. "CLA-3A")
 
 public:
     //restituisce il valore dell'attributo: tipo
@@ -25,4 +25,5 @@ public:
 
     //prende i dati da file XML
     void fromXML(string xml) override;
+
 };
