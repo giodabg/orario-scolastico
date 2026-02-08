@@ -3,15 +3,15 @@
 void toCSV() {}
 void fromCSV(std::string rigaCSV){}
 
-string toXML(){
-    std::string xml = << "<Orario>\n"
-        << "  <Lezioni>\n";
-        for (auto& l : lezioni) xml += "    <Lezione>" << l.info << "</Lezione>\n"
-            << "  </Lezioni>\n"
-            << "  <CodaProposte count=\"" << codaProposte.size() << "\"/>\n"
-            << "</Orario>";
-    return xml;
-
+void toXML(){
+    cout << "<Orario>\n";
+    cout << "  <Lezioni>\n";
+    for (const auto& l : lezioni) {
+        cout << "    <Lezione>" << l.info << "</Lezione>\n";
+    }
+    cout << "  </Lezioni>\n";
+    cout << "  <CodaProposte count=\"" << codaProposte.size() << "\"/>\n";
+    cout << "</Orario>" << endl;
 }
 
 void FromXML(string NomeFile)
@@ -55,4 +55,5 @@ void Orario::visualizzaOrarioClasse(Classe idClasse)
 
 void Orario::controllaStatoProposteAttive()
 {
+
 }
