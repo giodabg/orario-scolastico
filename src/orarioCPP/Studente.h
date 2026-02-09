@@ -1,26 +1,29 @@
 #pragma once
-#include "Utente.h"
+#include <sstream>
 
 class Studente : public Utente {
 private:
-    string tipo;      // Specifica se normale o rappresentante
-    string classeRef; // Riferimento all'ID della classe (es. "CLA-3A")
+    string tipo;      //normale o rappresentante
+    int classeRef; //ID della classe (es. "CLA-3A")
 
 public:
-    // Restituisce il valore dell'attributo: tipo
+    //restituisce il valore dell'attributo: tipo
     string getTipoUtente() override;
 
-    // Restituisce i dettagli dello studente (nome, cognome, classe)
+    //netodo toString
     string toString() override;
 
-    // Esporta i dati dello studente separati da virgole o punti e virgola
+    //esporta i dati in un file CSV
     string toCSV() override;
 
-    // Popola gli attributi analizzando una riga CSV
+    //prende i dati da un CSV
     void fromCSV(string riga) override;
 
+
+    //esporta i dati in un file XML
     string toXML();
 
-    // Analizza un blocco XML per assegnare i valori agli attributi
+    //prende i dati da file XML
     void fromXML(string xml) override;
+
 };
