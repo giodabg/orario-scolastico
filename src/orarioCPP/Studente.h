@@ -22,7 +22,6 @@ public:
     //prende i dati da un CSV
     void fromCSV(string riga) override;
 
-
     //esporta i dati in un file XML
     string toXML();
 

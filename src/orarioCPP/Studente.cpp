@@ -1,4 +1,5 @@
 #include "Studente.h"
+#include "Utente.h"
 
 string Studente::getTipoUtente()
 {
