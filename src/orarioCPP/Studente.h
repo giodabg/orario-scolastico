@@ -1,5 +1,8 @@
 #pragma once
-#include <sstream>
+#include <iostream>
+#include <string>
+#include "Utente.h"
+using namespace std;
 
 class Studente : public Utente {
 private:

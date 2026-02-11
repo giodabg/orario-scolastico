@@ -24,8 +24,12 @@ string Utente::toCSV()
 void Utente::fromCSV(string riga)
 {
     stringstream ss(riga);
+    string tempID; 
 
-    getline(ss, to_string(this->id), ',');
+    if (getline(ss, tempID, ',')) {
+        this->id = std::stoi(tempID); 
+    }
+
     getline(ss, this->nome, ',');
     getline(ss, this->cognome, ',');
     getline(ss, this->username, ',');
