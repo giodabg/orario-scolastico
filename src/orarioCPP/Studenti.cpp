@@ -20,7 +20,8 @@ size_t Studenti::size() const {
 // Controllo duplicati usando la stringa ID
 bool Studenti::esisteId(const string& id) const {
     for (size_t j = 0; j < items.size(); ++j) {
-        if (items[j]->getId() == id) { 
+        // Convertiamo l'int restituito da getId() in stringa per il confronto
+        if (to_string(items[j]->getId()) == id) {
             return true;
         }
     }
@@ -52,7 +53,7 @@ bool Studenti::loadFromFile(const string& path) {
         Studente* s = new Studente();
         s->fromXML(xmlString); 
 
-        if (esisteId(s->getId())) {
+        if (esisteId(to_string(s->getId()))) {
             cerr << "Warning: ID duplicato (" << s->getId() << "), scarto\n";
             delete s;
         }
