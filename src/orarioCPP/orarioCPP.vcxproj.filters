@@ -42,6 +42,15 @@
     <ClCompile Include="Studenti.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
+    <ClCompile Include="testStudenti.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="Utenti.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="testUtenti.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Aula.h">
@@ -66,6 +75,9 @@
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="Studenti.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Utenti.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
   </ItemGroup>

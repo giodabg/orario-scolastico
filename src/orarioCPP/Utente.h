@@ -27,7 +27,7 @@ public:
     void setPassword(string password) { this->password = password; }
 
     //ottiene tipo di utente
-    virtual string getTipoUtente() = 0;
+    virtual string getTipoUtente();
 
     //metodo toString
     virtual string toString();

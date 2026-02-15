@@ -130,8 +130,11 @@
     <ClCompile Include="Studente.cpp" />
     <ClCompile Include="Studenti.cpp" />
     <ClCompile Include="testAule.cpp" />
+    <ClCompile Include="testStudenti.cpp" />
+    <ClCompile Include="testUtenti.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
     <ClCompile Include="Utente.cpp" />
+    <ClCompile Include="Utenti.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Aula.h" />
@@ -142,6 +145,7 @@
     <ClInclude Include="Studenti.h" />
     <ClInclude Include="tinyxml2.h" />
     <ClInclude Include="Utente.h" />
+    <ClInclude Include="Utenti.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="resources\aule.xml" />
