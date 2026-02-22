@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ProposteModifica>
+
+	<PropostaModifica id="PM-1"
+					  tipo="SCAMBIO"
+					  stato="NESSUN_COMMENTO"
+					  proponenteId="1">
+
+		<Descrizione>Scambio prima e seconda ora del lunedì per la 1A</Descrizione>
+		<Commento></Commento>
+
+		<CoppieOre>
+			<Coppia sorgenteId="1" destinazioneId="2"/>
+		</CoppieOre>
+
+	</PropostaModifica>
+
+</ProposteModifica>

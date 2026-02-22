@@ -1,92 +1,209 @@
 #include "Utente.h"
+#include "libUtils.h"
 #include <sstream>
+#include <string>
+#include <cstdlib>
 
-string Utente::getTipoUtente()
-{
-    return string();
+using namespace std;
+
+// ============================================
+// COSTRUTTORE
+// ============================================
+Utente::Utente() {
+    id = -1;
+    nome = "";
+    cognome = "";
+    username = "";
+    password = "";
 }
 
-string Utente::toString()
-{
-    return string();
+// ============================================
+// TIPO UTENTE
+// ============================================
+string Utente::getTipoUtente() const {
+    return "UTENTE";
 }
 
-string Utente::toCSV()
-{
-    char splitter = ',';
-    string CSV = to_string(this->id) + splitter;
-    CSV += this->nome + splitter;
-    CSV += this->cognome + splitter;
-    CSV += this->username + splitter;
-    CSV += this->password;
+// ============================================
+// XML - SCRITTURA (toXML con TinyXML2)
+// ============================================
+XMLElement* Utente::toXML(XMLDocument& doc) const {
+    XMLElement* utenteElem = doc.NewElement("Utente");
+
+    // id attribute
+    string idStr = "UTE-" + to_string(this->id);
+    utenteElem->SetAttribute("id", idStr.c_str());
+
+    XMLElement* userElem = doc.NewElement("Username");
+    userElem->SetText(username.c_str());
+    utenteElem->InsertEndChild(userElem);
+
+    XMLElement* passElem = doc.NewElement("Password");
+    passElem->SetText(password.c_str());
+    utenteElem->InsertEndChild(passElem);
+
+    XMLElement* nomeElem = doc.NewElement("Nome");
+    nomeElem->SetText(nome.c_str());
+    utenteElem->InsertEndChild(nomeElem);
+
+    XMLElement* cognomeElem = doc.NewElement("Cognome");
+    cognomeElem->SetText(cognome.c_str());
+    utenteElem->InsertEndChild(cognomeElem);
+
+    return utenteElem;
 }
 
-void Utente::fromCSV(string riga)
-{
-    stringstream ss(riga);
-    string tempID; 
-
-    if (getline(ss, tempID, ',')) {
-        this->id = std::stoi(tempID); 
+// ============================================
+// XML - LETTURA (fromXML)
+// Atteso:
+// <Utente id="UTE-1">
+//   <Username>...</Username>
+//   <Password>...</Password>
+//   <Nome>...</Nome>
+//   <Cognome>...</Cognome>
+// </Utente>
+// ============================================
+Utente* Utente::fromXML(XMLElement* utenteElem) {
+    if (utenteElem == nullptr || string(utenteElem->Name()) != "Utente") {
+        return nullptr;
     }
 
-    getline(ss, this->nome, ',');
-    getline(ss, this->cognome, ',');
-    getline(ss, this->username, ',');
-    getline(ss, this->password, ',');
+    Utente* u = new Utente();
+
+    // id come attributo
+    const char* idAttr = utenteElem->Attribute("id");
+    if (idAttr) {
+        u->id = estraiIdNumerico(idAttr);
+    }
+
+    // Username
+    XMLElement* userElem = utenteElem->FirstChildElement("Username");
+    if (userElem && userElem->GetText()) {
+        u->username = userElem->GetText();
+    }
+
+    // Password
+    XMLElement* passElem = utenteElem->FirstChildElement("Password");
+    if (passElem && passElem->GetText()) {
+        u->password = passElem->GetText();
+    }
+
+    // Nome
+    XMLElement* nomeElem = utenteElem->FirstChildElement("Nome");
+    if (nomeElem && nomeElem->GetText()) {
+        u->nome = nomeElem->GetText();
+    }
+
+    // Cognome
+    XMLElement* cognomeElem = utenteElem->FirstChildElement("Cognome");
+    if (cognomeElem && cognomeElem->GetText()) {
+        u->cognome = cognomeElem->GetText();
+    }
+
+    return u;
 }
 
-string Utente::toXML() {
-    string  xml = "  <Utente id=\"" + to_string(this->id) + "\">\n";
-    xml += "    <Nome>" + this->nome + "</Nome>\n";
-    xml += "    <Cognome>" + this->cognome + "</Cognome>\n";
-    xml += "    <Username>" + this->username + "</Username>\n";
-    xml += "    <Password>" + this->password + "</Password>\n";
-    xml += "  </Utente>";
+// ============================================
+// CSV - SCRITTURA (toCSV)
+// Formato:
+// id,username,password,nome,cognome
+// ============================================
+string Utente::toCSV() const {
+    char splitter = ',';
 
+    string CSV = to_string(this->id) + splitter;
+    CSV += this->username + splitter;
+    CSV += this->password + splitter;
+    CSV += this->nome + splitter;
+    CSV += this->cognome;
+
+    return CSV;
+}
+
+// ============================================
+// CSV - LETTURA (fromCSV)
+// ============================================
+void Utente::fromCSV(const string& riga) {
+    stringstream ss(riga);
+    string temp;
+
+    // ID
+    if (getline(ss, temp, ',')) {
+        this->id = estraiIdNumerico(temp);
+    }
+
+    // Username
+    if (getline(ss, temp, ',')) {
+        this->username = temp;
+    }
+
+    // Password
+    if (getline(ss, temp, ',')) {
+        this->password = temp;
+    }
+
+    // Nome
+    if (getline(ss, temp, ',')) {
+        this->nome = temp;
+    }
+
+    // Cognome
+    if (getline(ss, temp, ',')) {
+        this->cognome = temp;
+    }
+}
+
+// ============================================
+// XML - SCRITTURA STRING (toXML stringa)
+// ============================================
+string Utente::toXML() const {
+    string xml;
+
+    xml += "<Utente id=\"";
+    xml += "UTE-" + to_string(id);
+    xml += "\">";
+
+    xml += "<Username>";
+    xml += escapeXML(username);
+    xml += "</Username>";
+
+    xml += "<Password>";
+    xml += escapeXML(password);
+    xml += "</Password>";
+
+    xml += "<Nome>";
+    xml += escapeXML(nome);
+    xml += "</Nome>";
+
+    xml += "<Cognome>";
+    xml += escapeXML(cognome);
+    xml += "</Cognome>";
+
+    xml += "</Utente>";
     return xml;
 }
 
-void Utente::fromXML(string xml) {
-    size_t start, end;
+// ============================================
+// RAPPRESENTAZIONE TESTUALE (toString)
+// ============================================
+string Utente::toString() const {
+    string s;
 
-    //estraggo l'ID Studente
-    start = xml.find("id=\"");
-    if (start != string::npos) {
-        start += 4; //sposto dopo id="
-        end = xml.find("\"", start);
-        to_string(this->id) = xml.substr(start, end - start);
-    }
+    s += "Utente ID: ";
+    s += "UTE-" + to_string(id);
+    s += "\n";
 
-    //estraggo il nome
-    start = xml.find("<Nome>");
-    if (start != string::npos) {
-        start += 6; //sposto dopo <Nome>
-        end = xml.find("</Nome>", start);
-        this->nome = xml.substr(start, end - start);
-    }
+    s += "  Username: ";
+    s += username;
+    s += "\n";
 
-    //estrazione il cognome
-    start = xml.find("<Cognome>");
-    if (start != string::npos) {
-        start += 9; // Sposta dopo <Cognome>
-        end = xml.find("</Cognome>", start);
-        this->cognome = xml.substr(start, end - start);
-    }
+    s += "  Nome: ";
+    s += nome;
+    s += "\n";
 
-    //estraggo lo username
-    start = xml.find("<Username>");
-    if (start != string::npos) {
-        start += 10;
-        end = xml.find("</Username>", start);
-        this->username = xml.substr(start, end - start);
-    }
+    s += "  Cognome: ";
+    s += cognome;
+    s += "\n";
 
-    //estraggo la password
-    start = xml.find("<Password>");
-    if (start != string::npos) {
-        start += 10;
-        end = xml.find("</Password>", start);
-        this->password = xml.substr(start, end - start);
-    }
+    return s;
 }

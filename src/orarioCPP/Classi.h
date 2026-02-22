@@ -1,45 +1,44 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "Docente.h"
+#include "Classe.h"
 #include "ContenitoreXML.h"
 #include "tinyxml2.h"
+
+// forward declaration (evita include circolare)
+class Studenti;
 
 using namespace std;
 using namespace tinyxml2;
 
-class Docenti : public ContenitoreXML {
+class Classi : public ContenitoreXML {
 private:
-    vector<Docente*> items;
+    vector<Classe*> items;
 
 public:
     // Costruttore
-    Docenti();
+    Classi();
 
     // Distruttore (libera memoria)
-    ~Docenti();
+    ~Classi();
 
     bool loadFromFile(const string& path) override;
     bool saveToFile(const string& path) const override;
     bool saveToFileOld(const string& path) const;
 
-    bool loadFromCSV(const string& path);
-    bool saveToCSV(const string& path) const;
-
     void clear() override;
     size_t size() const override;
 
     // CRUD - CREATE
-    bool aggiungi(Docente* docente);
+    bool aggiungi(Classe* classe);
 
     // CRUD - READ
-    Docente* cercaPerId(int id) const;
-    Docente* cercaPerCognome(const string& cognome) const;
-    Docente* get(size_t index) const;
-    vector<Docente*> cercaPerMateriaId(int materiaId) const;
+    Classe* cercaPerId(int id) const;
+    Classe* cercaPerAnnoSezione(int anno, char sezione) const;
+    Classe* get(size_t index) const;
 
     // CRUD - UPDATE
-    bool modifica(int id, Docente* nuovoDocente);
+    bool modifica(int id, Classe* nuovaClasse);
 
     // CRUD - DELETE
     bool rimuoviPerId(int id);
@@ -49,4 +48,10 @@ public:
     bool esisteId(int id) const;
     string toXML() const;
     string toString() const;
+
+    // === RESOLVE ===
+    // Collega:
+    // - Classe.studentiIds -> Classe.studenti (puntatori)
+    // - Studente.classeId  -> Studente.classe (puntatore)
+    bool resolve(Studenti& studenti);
 };

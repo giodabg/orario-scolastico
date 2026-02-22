@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Classi>
+
+	<Classe id="CLA-1">
+		<Nome>1A</Nome>
+		<Anno>1</Anno>
+		<Sezione>A</Sezione>
+	</Classe>
+
+	<Classe id="CLA-2">
+		<Nome>2B</Nome>
+		<Anno>2</Anno>
+		<Sezione>B</Sezione>
+	</Classe>
+
+</Classi>

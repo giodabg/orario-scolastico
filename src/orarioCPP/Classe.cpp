@@ -1,74 +1,289 @@
-#include "GiornoSettimana.h"
 #include "Classe.h"
-#include "Aula.h"
-#include "Materia.h"
-#include "tinyxml2.h"
-#include <iostream>
+#include "Studente.h"
+#include "libUtils.h"
+#include <sstream>
+#include <string>
 
 using namespace std;
 
+// ============================================
+// COSTRUTTORE
+// ============================================
+Classe::Classe() {
+    id = -1;
+    anno = 0;
+    sezione = ' ';
+    indirizzo = "";
+}
 
-class Classe {
-    private:
-        int id; // es. 1, 4
-        string codice; // es. "3AINF", "5BCHI"
-        int numeroStudenti; // es. 22, 27
-        vector studenti; // es. [Luigi, Carlo]
-        vector lezioni; // es. [Lun1, Lun2]
+// ============================================
+// GETTER PUNTATORI
+// ============================================
+Studente* Classe::getStudente(size_t index) const {
+    if (index < studenti.size()) {
+        return studenti[index];
+    }
+    return nullptr;
+}
 
-    public:
+// ============================================
+// METODO DI RISOLUZIONE
+// ============================================
+void Classe::resolveStudenti(const vector<Studente*>& tuttiStudenti) {
+    studenti.clear();
 
-        Classe();
-        Classe(int id, string codice, int numeroStudenti, vector studenti, vector lezioni);
-        ~Classe();
+    for (size_t i = 0; i < studentiIds.size(); ++i) {
+        int studenteId = studentiIds[i];
 
-        // Inserisce un nuovo studente (Awais Mohamed)
-        void aggiungiStudente(Studente* s){          
-            studenti.add(s);
-            numeroStudenti++;
-        };     
-        // Rimuove uno studente (Debabia || Cristain Botezatu Madalin)
-        void rimuoviStudente(){
-                studenti.remove(s);
-                numeroStudenti--;
-        };                 
-        // Collega una lezione alla classe
-        void associaLezione(Lezione* l){
-            lezioni.add(l);
-        }; 
-
-        void toString();
-        void toCSV();
-        void fromCSV();
-        void toXML(){
-            cout << "<Classe id=\"CLA-" << id << "\">" << endl;
-            cout << "    <Codice>" << codice << "</Codice>" << endl; //stampe indentate con gli spazi (prob c'è un metodo migliore boh)
-            cout << "    <NumeroStudenti>" << numeroStudenti << "</NumeroStudenti>" << endl;
-            cout << "    <LezioniAssegnate>" << endl;
-            for (int i = 0; i < lezioni.size(); i++) { //stessa roba dei docenti in Lezione.cpp ma cvon lezioni
-                cout << "        <LezioneRef id=\""<< lezioni[i].getId() << "\"/>" << endl;
+        // Cerca lo studente con questo ID
+        for (size_t j = 0; j < tuttiStudenti.size(); ++j) {
+            if (tuttiStudenti[j] != nullptr && tuttiStudenti[j]->getId() == studenteId) {
+                studenti.push_back(tuttiStudenti[j]);
             }
-            cout << "    </LezioniAssegnate>" << endl;
-            cout << "</Classe>" << endl; 
+        }
+    }
+}
+
+// ============================================
+// XML - LETTURA (fromXML)
+// ============================================
+Classe* Classe::fromXML(XMLElement* classeElem) {
+    if (classeElem == nullptr || string(classeElem->Name()) != "Classe") {
+        return nullptr;
+    }
+
+    Classe* classe = new Classe();
+
+    // Leggi id come attributo
+    const char* idAttr = classeElem->Attribute("id");
+    if (idAttr) {
+        classe->setId(estraiIdNumerico(idAttr));
+    }
+
+    // Leggi Anno
+    XMLElement* annoElem = classeElem->FirstChildElement("Anno");
+    if (annoElem && annoElem->GetText()) {
+        classe->anno = atoi(annoElem->GetText());
+    }
+
+    // Leggi Sezione
+    XMLElement* sezioneElem = classeElem->FirstChildElement("Sezione");
+    if (sezioneElem && sezioneElem->GetText()) {
+        const char* sezText = sezioneElem->GetText();
+        if (sezText && sezText[0] != '\0') {
+            classe->sezione = sezText[0];
+        }
+    }
+
+    // Leggi Indirizzo
+    XMLElement* indirizzoElem = classeElem->FirstChildElement("Indirizzo");
+    if (indirizzoElem && indirizzoElem->GetText()) {
+        classe->indirizzo = indirizzoElem->GetText();
+    }
+
+    // Leggi Studenti
+    XMLElement* studentiElem = classeElem->FirstChildElement("Studenti");
+    if (studentiElem) {
+        XMLElement* studenteRef = studentiElem->FirstChildElement("StudenteRef");
+        while (studenteRef != nullptr) {
+            const char* studenteIdAttr = studenteRef->Attribute("id");
+            if (studenteIdAttr) {
+                int stuId = estraiIdNumerico(studenteIdAttr);
+                classe->addStudenteId(stuId);
+            }
+            studenteRef = studenteRef->NextSiblingElement("StudenteRef");
+        }
+    }
+
+    return classe;
+}
+
+// ============================================
+// XML - SCRITTURA (toXML con TinyXML2)
+// ============================================
+XMLElement* Classe::toXML(XMLDocument& doc) const {
+    XMLElement* classeElem = doc.NewElement("Classe");
+    string idStr = "CLA-" + to_string(this->id);
+    classeElem->SetAttribute("id", idStr.c_str());
+
+    XMLElement* annoElem = doc.NewElement("Anno");
+    annoElem->SetText(anno);
+    classeElem->InsertEndChild(annoElem);
+
+    XMLElement* sezioneElem = doc.NewElement("Sezione");
+    string sezStr(1, sezione);
+    sezioneElem->SetText(sezStr.c_str());
+    classeElem->InsertEndChild(sezioneElem);
+
+    XMLElement* indirizzoElem = doc.NewElement("Indirizzo");
+    indirizzoElem->SetText(indirizzo.c_str());
+    classeElem->InsertEndChild(indirizzoElem);
+
+    // Studenti
+    if (studentiIds.size() > 0) {
+        XMLElement* studentiElem = doc.NewElement("Studenti");
+
+        for (size_t i = 0; i < studentiIds.size(); ++i) {
+            XMLElement* studenteRef = doc.NewElement("StudenteRef");
+            string stuIdStr = "STU-" + to_string(studentiIds[i]);
+            studenteRef->SetAttribute("id", stuIdStr.c_str());
+            studentiElem->InsertEndChild(studenteRef);
         }
 
-        void fromXML(){
+        classeElem->InsertEndChild(studentiElem);
+    }
 
-            id = element.Attribute("id");
-            codice = element.FirstChildElement("Codice").GetText();
-            element.FirstChildElement("NumeroStudenti").QueryIntText(&this.numeroStudenti);
+    return classeElem;
+}
 
-            //prende il tag lezioniAssegnate
-            XMLElement* lezioniNode = element.FirstChildElement("LezioniAssegnate");
-            if (lezioniNode) { //comtrolla che esista
-                XMLElement* lezRef = lezioniNode.FirstChildElement("LezioneRef"); //prende l'elemento interno (child)
-                while (lezRef) {
-                    const char* idLez = lezRef.Attribute("id");
-                    Lezione* nuovaLezione = new Lezione(); 
-                    lezioni.insert(nuovaLezione); //inserisce l'id nel vettore
-                    lezRef = lezRef.NextSiblingElement("LezioneRef");  //prende quello dopo e fa ripartire il ciclo, se no si ferma
+// ============================================
+// CSV - SCRITTURA (toCSV)
+// ============================================
+string Classe::toCSV() const {
+    char splitter = ',';
+    string CSV = to_string(this->id) + splitter;
+    CSV += to_string(this->anno) + splitter;
+    CSV += this->sezione;
+    CSV += splitter;
+    CSV += this->indirizzo + splitter;
+
+    // Studenti (separatore interno: punto e virgola)
+    string studentiStr = "";
+    for (size_t i = 0; i < studentiIds.size(); ++i) {
+        if (i > 0) {
+            studentiStr += ";";
+        }
+        studentiStr += to_string(studentiIds[i]);
+    }
+    CSV += studentiStr;
+
+    return CSV;
+}
+
+// ============================================
+// CSV - LETTURA (fromCSV)
+// ============================================
+void Classe::fromCSV(const string& riga) {
+    stringstream ss(riga);
+    string tempID;
+
+    // Leggi ID
+    if (getline(ss, tempID, ',')) {
+        this->id = estraiIdNumerico(tempID);
+    }
+
+    // Leggi Anno
+    string annoStr;
+    if (getline(ss, annoStr, ',')) {
+        this->anno = atoi(annoStr.c_str());
+    }
+
+    // Leggi Sezione
+    string sezioneStr;
+    if (getline(ss, sezioneStr, ',')) {
+        if (!sezioneStr.empty()) {
+            this->sezione = sezioneStr[0];
+        }
+    }
+
+    // Leggi Indirizzo
+    getline(ss, this->indirizzo, ',');
+
+    // Leggi Studenti (separati da punto e virgola)
+    string studentiStr;
+    if (getline(ss, studentiStr, ',')) {
+        if (!studentiStr.empty()) {
+            stringstream ssStu(studentiStr);
+            string stuIdStr;
+
+            while (getline(ssStu, stuIdStr, ';')) {
+                if (!stuIdStr.empty()) {
+                    int stuId = atoi(stuIdStr.c_str());
+                    this->studentiIds.push_back(stuId);
                 }
             }
         }
+    }
+}
 
-};
+// ============================================
+// XML - SCRITTURA STRING (toXML stringa)
+// ============================================
+string Classe::toXML() const {
+    string xml;
+
+    xml += "<Classe id=\"";
+    xml += "CLA-" + to_string(id);
+    xml += "\">";
+
+    xml += "<Anno>";
+    xml += to_string(anno);
+    xml += "</Anno>";
+
+    xml += "<Sezione>";
+    xml += sezione;
+    xml += "</Sezione>";
+
+    xml += "<Indirizzo>";
+    xml += escapeXML(indirizzo);
+    xml += "</Indirizzo>";
+
+    // Studenti
+    if (studentiIds.size() > 0) {
+        xml += "<Studenti>";
+
+        for (size_t i = 0; i < studentiIds.size(); ++i) {
+            xml += "<StudenteRef id=\"STU-";
+            xml += to_string(studentiIds[i]);
+            xml += "\"/>";
+        }
+
+        xml += "</Studenti>";
+    }
+
+    xml += "</Classe>";
+    return xml;
+}
+
+// ============================================
+// RAPPRESENTAZIONE TESTUALE (toString)
+// ============================================
+string Classe::toString() const {
+    string s;
+
+    s += "Classe ID: ";
+    s += "CLA-" + to_string(id);
+    s += "\n";
+
+    s += "  Anno: ";
+    s += to_string(anno);
+    s += "\n";
+
+    s += "  Sezione: ";
+    s += sezione;
+    s += "\n";
+
+    s += "  Indirizzo: ";
+    s += indirizzo;
+    s += "\n";
+
+    s += "  Numero studenti: ";
+    s += to_string(studentiIds.size());
+    s += "\n";
+
+    s += "  Studenti IDs: ";
+    if (studentiIds.size() == 0) {
+        s += "(nessuno)";
+    }
+    else {
+        for (size_t i = 0; i < studentiIds.size(); ++i) {
+            if (i > 0) {
+                s += ", ";
+            }
+            s += "STU-" + to_string(studentiIds[i]);
+        }
+    }
+    s += "\n";
+
+    return s;
+}

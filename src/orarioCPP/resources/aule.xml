@@ -1,34 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Aule>
-  <Aula id="AUL-101">
-    <Nome>Aula 1</Nome>
-    <Posti>25</Posti>
-    <Tipo>AULA_STANDARD</Tipo>
 
-    <MaterieAmmesse>
-      <MateriaRef id="MAT-001"/>
-      <MateriaRef id="MAT-003"/>
-    </MaterieAmmesse>
-  </Aula>
+	<Aula id="AUL-101">
+		<Nome>Aula 1</Nome>
+		<Posti>25</Posti>
+		<Tipo>AULA_STANDARD</Tipo>
+		<MaterieAmmesse>
+			<MateriaRef id="MAT-001"/>
+			<MateriaRef id="MAT-003"/>
+		</MaterieAmmesse>
+	</Aula>
 
-  <Aula id="AUL-204">
-    <Nome>Lab Info</Nome>
-    <Posti>30</Posti>
-    <Tipo>AULA_DEDICATA</Tipo>
+	<Aula id="AUL-204">
+		<Nome>Lab Info</Nome>
+		<Posti>30</Posti>
+		<Tipo>AULA_DEDICATA</Tipo>
+		<MaterieAmmesse>
+			<MateriaRef id="MAT-002"/>
+		</MaterieAmmesse>
+	</Aula>
 
-    <MaterieAmmesse>
-      <MateriaRef id="MAT-002"/>
-    </MaterieAmmesse>
-  </Aula>
-
-<Aula id="AUL-101">
-	<Nome>Aula 1</Nome>
-	<Posti>25</Posti>
-	<Tipo>AULA_STANDARD</Tipo>
-
-	<MaterieAmmesse>
-		<MateriaRef id="MAT-001"/>
-		<MateriaRef id="MAT-003"/>
-	</MaterieAmmesse>
-</Aula>
 </Aule>

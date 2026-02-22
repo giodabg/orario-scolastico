@@ -125,11 +125,21 @@
   <ItemGroup>
     <ClCompile Include="Aula.cpp" />
     <ClCompile Include="Aule.cpp" />
+    <ClCompile Include="Classe.cpp" />
+    <ClCompile Include="Classi.cpp" />
+    <ClCompile Include="Docente.cpp" />
+    <ClCompile Include="Docenti.cpp" />
+    <ClCompile Include="Lezione.cpp" />
     <ClCompile Include="libUtils.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Materia.cpp" />
+    <ClCompile Include="Materie.cpp" />
+    <ClCompile Include="Orario.cpp" />
+    <ClCompile Include="PropostaModifica.cpp" />
     <ClCompile Include="Studente.cpp" />
     <ClCompile Include="Studenti.cpp" />
     <ClCompile Include="testAule.cpp" />
+    <ClCompile Include="testOrario.cpp" />
     <ClCompile Include="testStudenti.cpp" />
     <ClCompile Include="testUtenti.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
@@ -139,8 +149,17 @@
   <ItemGroup>
     <ClInclude Include="Aula.h" />
     <ClInclude Include="Aule.h" />
+    <ClInclude Include="Classe.h" />
+    <ClInclude Include="Classi.h" />
     <ClInclude Include="ContenitoreXML.h" />
+    <ClInclude Include="Docente.h" />
+    <ClInclude Include="Docenti.h" />
+    <ClInclude Include="Lezione.h" />
     <ClInclude Include="libUtils.h" />
+    <ClInclude Include="Materia.h" />
+    <ClInclude Include="Materie.h" />
+    <ClInclude Include="Orario.h" />
+    <ClInclude Include="PropostaModifica.h" />
     <ClInclude Include="Studente.h" />
     <ClInclude Include="Studenti.h" />
     <ClInclude Include="tinyxml2.h" />
@@ -148,8 +167,15 @@
     <ClInclude Include="Utenti.h" />
   </ItemGroup>
   <ItemGroup>
+    <Xml Include="classi.xml" />
+    <Xml Include="docenti.xml" />
+    <Xml Include="materie.xml" />
+    <Xml Include="orario.xml" />
+    <Xml Include="proposte.xml" />
     <Xml Include="resources\aule.xml" />
     <Xml Include="resources\aule_out.xml" />
+    <Xml Include="resources\studenti.xml" />
+    <Xml Include="utenti.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

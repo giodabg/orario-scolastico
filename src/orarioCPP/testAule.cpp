@@ -1,10 +1,7 @@
 #include <iostream>
 #include <string>
-#include <vector>
-#include <map>
 
 #include "Aule.h"
-#include "tinyxml2.h"
 
 using namespace std;
 using namespace tinyxml2;
@@ -52,7 +49,6 @@ static void funzioneSalva(const Aule& aule) {
 
 static void funzioneVisualizzaAule(const Aule& aule) {
     cout << aule.toString() << "============\n";
-
 }
 
 // -----------------------------------------------------------------------------

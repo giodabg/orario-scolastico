@@ -1,112 +1,302 @@
 #include "Studente.h"
-#include "Utente.h"
+#include "Classe.h"
+#include "libUtils.h"
+#include <sstream>
+#include <string>
+#include <cstdlib>
 
-string Studente::getTipoUtente()
-{
-    return string();
+using namespace std;
+
+// ============================================
+// COSTRUTTORE
+// ============================================
+Studente::Studente() {
+    tipo = "normale";
+    classeId = -1;
+    classe = nullptr;
 }
 
-string Studente::toString()
-{
-    return string();
+// ============================================
+// TIPO UTENTE
+// ============================================
+string Studente::getTipoUtente() const {
+    return "STUDENTE";
 }
 
-string Studente::toCSV()
-{
+// ============================================
+// CSV - SCRITTURA (toCSV)
+// Formato coerente con gli altri oggetti: campi base + campi Studente
+// ============================================
+string Studente::toCSV() const {
+    char splitter = ',';
 
-    string csv = id + ',';
-    csv += nome + ',',;
-    csv += cognome + ',';
-    csv += username + ',';
-    csv += password + ',';
-    csv += tipo + ',';
-    csv += classeRef;
+    // NB: qui assumo che Utente esponga getter base:
+    // getId(), getUsername(), getPassword(), getNome(), getCognome()
+    string CSV = to_string(this->getId()) + splitter;
+    CSV += this->getUsername() + splitter;
+    CSV += this->getPassword() + splitter;
+    CSV += this->getNome() + splitter;
+    CSV += this->getCognome() + splitter;
 
-    return csv;
+    // Campi specifici Studente
+    CSV += this->tipo + splitter;
+    CSV += to_string(this->classeId);
+
+    return CSV;
 }
 
-string Studente::toXML() {
-    string  xml = "  <Studente id=\"" + id + "\">\n";
-            xml += "    <Nome>" + nome + "</Nome>\n";
-            xml += "    <Cognome>" + cognome + "</Cognome>\n";
-            xml += "    <Username>" + username + "</Username>\n";
-            xml += "    <Password>" + password + "</Password>\n";
-            xml += "    <Tipo>" + tipo + "</Tipo>\n";
-            xml += "    <ClasseRef id=\"" + classeRef + "\"/>\n";
-            xml += "  </Studente>";
-    
-            return xml;
-}
-
-void Studente::fromCSV(string riga) {
+// ============================================
+// CSV - LETTURA (fromCSV)
+// ============================================
+void Studente::fromCSV(const string& riga) {
     stringstream ss(riga);
+    string temp;
 
-    getline(ss, this->id, ',');
-    getline(ss, this->nome, ',');
-    getline(ss, this->cognome, ',');
-    getline(ss, this->username, ',');
-    getline(ss, this->password, ',');
-    getline(ss, this->tipo, ',');
-    getline(ss, this->classeRef, ',');
+    // ID
+    if (getline(ss, temp, ',')) {
+        this->setId(estraiIdNumerico(temp));
+    }
+
+    // Username
+    if (getline(ss, temp, ',')) {
+        this->setUsername(temp);
+    }
+
+    // Password
+    if (getline(ss, temp, ',')) {
+        this->setPassword(temp);
+    }
+
+    // Nome
+    if (getline(ss, temp, ',')) {
+        this->setNome(temp);
+    }
+
+    // Cognome
+    if (getline(ss, temp, ',')) {
+        this->setCognome(temp);
+    }
+
+    // Tipo
+    if (getline(ss, temp, ',')) {
+        this->tipo = temp;
+    }
+    else {
+        this->tipo = "normale";
+    }
+
+    // ClasseId
+    if (getline(ss, temp, ',')) {
+        if (!temp.empty()) {
+            this->classeId = atoi(temp.c_str());
+        }
+        else {
+            this->classeId = -1;
+        }
+    }
+    else {
+        this->classeId = -1;
+    }
+
+    // Il puntatore runtime si risolve dopo (resolve)
+    this->classe = nullptr;
 }
 
-void Studente::fromXML(string xml) {
-    size_t start, end;
-
-    //estraggo l'ID Studente
-    start = xml.find("id=\"");
-    if (start != string::npos) {
-        start += 4; //sposto dopo id="
-        end = xml.find("\"", start);
-        this->id = xml.substr(start, end - start);
+// ============================================
+// XML - LETTURA (fromXML)
+// Atteso:
+// <Studente id="STU-1">
+//   <Username>...</Username>
+//   <Password>...</Password>
+//   <Nome>...</Nome>
+//   <Cognome>...</Cognome>
+//   <Tipo>normale</Tipo>
+//   <ClasseRef id="CLA-3"/>
+// </Studente>
+// ============================================
+Studente* Studente::fromXML(XMLElement* studenteElem) {
+    if (studenteElem == nullptr || string(studenteElem->Name()) != "Studente") {
+        return nullptr;
     }
 
-    //estraggo il nome
-    start = xml.find("<Nome>");
-    if (start != string::npos) {
-        start += 6; //sposto dopo <Nome>
-        end = xml.find("</Nome>", start);
-        this->nome = xml.substr(start, end - start);
+    Studente* s = new Studente();
+
+    // id come attributo
+    const char* idAttr = studenteElem->Attribute("id");
+    if (idAttr) {
+        s->setId(estraiIdNumerico(idAttr));
     }
 
-    //estrazione il cognome
-    start = xml.find("<Cognome>");
-    if (start != string::npos) {
-        start += 9; // Sposta dopo <Cognome>
-        end = xml.find("</Cognome>", start);
-        this->cognome = xml.substr(start, end - start);
+    // Username
+    XMLElement* userElem = studenteElem->FirstChildElement("Username");
+    if (userElem && userElem->GetText()) {
+        s->setUsername(userElem->GetText());
     }
 
-    //estraggo lo username
-    start = xml.find("<Username>");
-    if (start != string::npos) {
-        start += 10;
-        end = xml.find("</Username>", start);
-        this->username = xml.substr(start, end - start);
+    // Password
+    XMLElement* passElem = studenteElem->FirstChildElement("Password");
+    if (passElem && passElem->GetText()) {
+        s->setPassword(passElem->GetText());
     }
 
-    //estraggo la password
-    start = xml.find("<Password>");
-    if (start != string::npos) {
-        start += 10;
-        end = xml.find("</Password>", start);
-        this->password = std::stoi(xml.substr(start, end - start)); //fatto in pullman da telefono, non sono sicuro sia giusto
+    // Nome
+    XMLElement* nomeElem = studenteElem->FirstChildElement("Nome");
+    if (nomeElem && nomeElem->GetText()) {
+        s->setNome(nomeElem->GetText());
     }
 
-    //estraggo il tipo
-    start = xml.find("<Tipo>");
-    if (start != string::npos) {
-        start += 6;
-        end = xml.find("</Tipo>", start);
-        this->tipo = xml.substr(start, end - start);
+    // Cognome
+    XMLElement* cognomeElem = studenteElem->FirstChildElement("Cognome");
+    if (cognomeElem && cognomeElem->GetText()) {
+        s->setCognome(cognomeElem->GetText());
     }
 
-    //estraggo la classeRef
-    start = xml.find("<ClasseRef id=\"");
-    if (start != string::npos) {
-        start += 15; //sposto dopo <ClasseRef id="
-        end = xml.find("\"", start);
-        this->classeRef = xml.substr(start, end - start);
+    // Tipo
+    XMLElement* tipoElem = studenteElem->FirstChildElement("Tipo");
+    if (tipoElem && tipoElem->GetText()) {
+        s->tipo = tipoElem->GetText();
+    }
+    else {
+        s->tipo = "normale";
     }
 
+    // ClasseRef (solo id, puntatore risolto dopo)
+    XMLElement* classeRef = studenteElem->FirstChildElement("ClasseRef");
+    if (classeRef) {
+        const char* claIdAttr = classeRef->Attribute("id");
+        if (claIdAttr) {
+            s->classeId = estraiIdNumerico(claIdAttr);
+        }
+    }
+
+    s->classe = nullptr;
+    return s;
+}
+
+// ============================================
+// XML - SCRITTURA (toXML con TinyXML2)
+// ============================================
+XMLElement* Studente::toXML(XMLDocument& doc) const {
+    XMLElement* studenteElem = doc.NewElement("Studente");
+
+    // id attribute
+    string idStr = "STU-" + to_string(this->getId());
+    studenteElem->SetAttribute("id", idStr.c_str());
+
+    XMLElement* userElem = doc.NewElement("Username");
+    userElem->SetText(this->getUsername().c_str());
+    studenteElem->InsertEndChild(userElem);
+
+    XMLElement* passElem = doc.NewElement("Password");
+    passElem->SetText(this->getPassword().c_str());
+    studenteElem->InsertEndChild(passElem);
+
+    XMLElement* nomeElem = doc.NewElement("Nome");
+    nomeElem->SetText(this->getNome().c_str());
+    studenteElem->InsertEndChild(nomeElem);
+
+    XMLElement* cognomeElem = doc.NewElement("Cognome");
+    cognomeElem->SetText(this->getCognome().c_str());
+    studenteElem->InsertEndChild(cognomeElem);
+
+    XMLElement* tipoElem = doc.NewElement("Tipo");
+    tipoElem->SetText(tipo.c_str());
+    studenteElem->InsertEndChild(tipoElem);
+
+    // ClasseRef
+    if (classeId >= 0) {
+        XMLElement* classeRef = doc.NewElement("ClasseRef");
+        string claIdStr = "CLA-" + to_string(classeId);
+        classeRef->SetAttribute("id", claIdStr.c_str());
+        studenteElem->InsertEndChild(classeRef);
+    }
+
+    return studenteElem;
+}
+
+// ============================================
+// XML - SCRITTURA STRING (toXML stringa)
+// ============================================
+string Studente::toXML() const {
+    string xml;
+
+    xml += "<Studente id=\"";
+    xml += "STU-" + to_string(this->getId());
+    xml += "\">";
+
+    xml += "<Username>";
+    xml += escapeXML(this->getUsername());
+    xml += "</Username>";
+
+    xml += "<Password>";
+    xml += escapeXML(this->getPassword());
+    xml += "</Password>";
+
+    xml += "<Nome>";
+    xml += escapeXML(this->getNome());
+    xml += "</Nome>";
+
+    xml += "<Cognome>";
+    xml += escapeXML(this->getCognome());
+    xml += "</Cognome>";
+
+    xml += "<Tipo>";
+    xml += escapeXML(tipo);
+    xml += "</Tipo>";
+
+    if (classeId >= 0) {
+        xml += "<ClasseRef id=\"CLA-";
+        xml += to_string(classeId);
+        xml += "\"/>";
+    }
+
+    xml += "</Studente>";
+    return xml;
+}
+
+// ============================================
+// RAPPRESENTAZIONE TESTUALE (toString)
+// ============================================
+string Studente::toString() const {
+    string s;
+
+    s += "Studente ID: ";
+    s += "STU-" + to_string(this->getId());
+    s += "\n";
+
+    s += "  Username: ";
+    s += this->getUsername();
+    s += "\n";
+
+    s += "  Nome: ";
+    s += this->getNome();
+    s += "\n";
+
+    s += "  Cognome: ";
+    s += this->getCognome();
+    s += "\n";
+
+    s += "  Tipo: ";
+    s += tipo;
+    s += "\n";
+
+    s += "  ClasseId: ";
+    if (classeId >= 0) {
+        s += "CLA-" + to_string(classeId);
+    }
+    else {
+        s += "(non assegnata)";
+    }
+    s += "\n";
+
+    s += "  Classe (ptr): ";
+    if (classe != nullptr) {
+        s += "OK";
+    }
+    else {
+        s += "NULL";
+    }
+    s += "\n";
+
+    return s;
 }

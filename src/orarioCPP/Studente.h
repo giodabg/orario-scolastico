@@ -1,31 +1,49 @@
 #pragma once
-#include <iostream>
 #include <string>
 #include "Utente.h"
+#include "tinyxml2.h"
+
+// forward declaration
+class Classe;
+
 using namespace std;
+using namespace tinyxml2;
 
 class Studente : public Utente {
 private:
     string tipo;      //normale o rappresentante
-    int classeRef; //ID della classe (es. "CLA-3A")
+    int classeId;     // ID della classe (per serializzazione)
+    Classe* classe;   //puntatore alla classe di appartenenza
 
 public:
-    //restituisce il valore dell'attributo: tipo
-    string getTipoUtente() override;
+    // Costruttore di default
+    Studente();
 
-    //netodo toString
-    string toString() override;
+    // Getter
+    string getTipo() const { return tipo; }
+    int getClasseId() const { return classeId; }
+    Classe* getClasse() const { return classe; }
 
-    //esporta i dati in un file CSV
-    string toCSV() override;
+    // Setter
+    void setTipo(const string& t) { tipo = t; }
+    void setClasseId(int cId) { classeId = cId; }
+    void setClasse(Classe* c) { classe = c; }
 
-    //prende i dati da un CSV
-    void fromCSV(string riga) override;
+    // Metodo di risoluzione
+    void resolveClasse(Classe* c) { classe = c; }
 
-    //esporta i dati in un file XML
-    string toXML();
+    // Override metodi virtuali della classe base
+    string getTipoUtente() const override;
 
-    //prende i dati da file XML
-    void fromXML(string xml) override;
+    // Metodi CSV
+    string toCSV() const override;
+    void fromCSV(const string& riga) override;
 
+    // Metodi XML con TinyXML2
+    static Studente* fromXML(XMLElement* studenteElem);
+    XMLElement* toXML(XMLDocument& doc) const override;
+
+    // utility
+    string toXML() const;
+    string toString() const override;
 };

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Orario>
+
+	<Lezione id="LEZ-1">
+		<Giorno>LUNEDI</Giorno>
+		<Ora>1</Ora>
+		<ClasseRef id="CLA-1"/>
+		<AulaRef id="AUL-1"/>
+		<MateriaRef id="MAT-1"/>
+		<Docenti>
+			<DocenteRef id="DOC-1"/>
+		</Docenti>
+	</Lezione>
+
+	<Lezione id="LEZ-2">
+		<Giorno>LUNEDI</Giorno>
+		<Ora>2</Ora>
+		<ClasseRef id="CLA-1"/>
+		<AulaRef id="AUL-1"/>
+		<MateriaRef id="MAT-2"/>
+		<Docenti>
+			<DocenteRef id="DOC-2"/>
+		</Docenti>
+	</Lezione>
+
+	<Lezione id="LEZ-3">
+		<Giorno>MARTEDI</Giorno>
+		<Ora>1</Ora>
+		<ClasseRef id="CLA-2"/>
+		<AulaRef id="AUL-2"/>
+		<MateriaRef id="MAT-1"/>
+		<Docenti>
+			<DocenteRef id="DOC-1"/>
+		</Docenti>
+	</Lezione>
+
+</Orario>

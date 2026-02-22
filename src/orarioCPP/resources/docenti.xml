@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Docenti>
+
+	<Docente id="DOC-1">
+		<Nome>Marco</Nome>
+		<Cognome>Ferrari</Cognome>
+		<Username>m.ferrari</Username>
+		<Password>doc123</Password>
+	</Docente>
+
+	<Docente id="DOC-2">
+		<Nome>Laura</Nome>
+		<Cognome>Conti</Cognome>
+		<Username>l.conti</Username>
+		<Password>doc456</Password>
+	</Docente>
+
+</Docenti>

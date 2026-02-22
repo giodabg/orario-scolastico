@@ -1,16 +1,28 @@
 #include <iostream>
 #include <fstream>
-
+#include <sstream>
 #include "Materie.h"
 
 using namespace std;
 
+// ============================================
+// COSTRUTTORE
+// ============================================
+Materie::Materie() {
+    // Vector vuoto per default
+}
+
+// ============================================
+// DISTRUTTORE
+// ============================================
 Materie::~Materie() {
     clear();
 }
 
+// ============================================
+// GESTIONE CONTENITORE
+// ============================================
 void Materie::clear() {
-    // dealloca tutti gli items possedute dal contenitore
     for (size_t i = 0; i < items.size(); ++i) {
         delete items[i];
     }
@@ -21,19 +33,9 @@ size_t Materie::size() const {
     return items.size();
 }
 
-// Controlla che id non sia duplicato
-bool Materie::esisteId(int id) const {
-
-    // Controlla se l'id è già presente
-    bool trovato = false;
-    for (size_t j = 0; j < items.size(); ++j) {
-        if (items[j]->getId() == id) {
-            return true;  // Duplicato trovato
-        }
-    }
-    return false;
-}
-
+// ============================================
+// CARICAMENTO DA FILE XML
+// ============================================
 bool Materie::loadFromFile(const string& path) {
     clear();
 
@@ -46,7 +48,7 @@ bool Materie::loadFromFile(const string& path) {
     }
 
     XMLElement* root = doc.RootElement();
-    if (root == 0 || string(root->Name()) != "Materie") {
+    if (root == nullptr || string(root->Name()) != "Materie") {
         cerr << "Errore loadFromFile(Materie): root non valida (attesa <Materie>)\n";
         return false;
     }
@@ -54,46 +56,32 @@ bool Materie::loadFromFile(const string& path) {
     XMLElement* materiaElem = root->FirstChildElement("Materia");
     while (materiaElem != nullptr) {
         Materia* m = Materia::fromXML(materiaElem);
+
         if (m == nullptr) {
             cerr << "Warning loadFromFile(Materie): nodo <Materia> non valido, scartato\n";
-            // passo al prossimo nodo <Materia>
-            materiaElem = materiaElem->NextSiblingElement("Materia");
-            // continua con il prossimo ciclo, senza aggiungere nulla al contenitore
-            continue;
-        }
-
-        int id = m->getId();
-
-        // gestisci duplicati
-        if (esisteId(id)) {
-            cerr << "Warning loadFromFile(Materie): ID duplicato (" << id << "), scarto\n";
-            // cancello l'oggetto appena creato, che non sarà aggiunto al contenitore
-            delete m;
-            // passo al prossimo nodo <Materia>
             materiaElem = materiaElem->NextSiblingElement("Materia");
         }
         else {
-            // ID univoco, posso aggiungere al contenitore
-            items.push_back(m);
+            int id = m->getId();
 
-            // passo al prossimo nodo <Materie>
-            materiaElem = materiaElem->NextSiblingElement("Materia");
+            if (esisteId(id)) {
+                cerr << "Warning loadFromFile(Materie): ID duplicato (" << id << "), scarto\n";
+                delete m;
+                materiaElem = materiaElem->NextSiblingElement("Materia");
+            }
+            else {
+                items.push_back(m);
+                materiaElem = materiaElem->NextSiblingElement("Materia");
+            }
         }
     }
 
     return true;
 }
 
-
-// ------------------------------------------------------
-// Materie::saveToFile (TinyXML2)
-// Scrive:
-//
-// <?xml version="1.0" encoding="UTF-8"?>
-// <Materie>
-//   <Materia ...> ... </Materia>
-// </Materia>
-// ------------------------------------------------------
+// ============================================
+// SALVATAGGIO SU FILE XML (TinyXML2)
+// ============================================
 bool Materie::saveToFile(const string& path) const {
     XMLDocument doc;
 
@@ -123,11 +111,13 @@ bool Materie::saveToFile(const string& path) const {
     return true;
 }
 
+// ============================================
+// SALVATAGGIO SU FILE XML (Stream)
+// ============================================
 bool Materie::saveToFileOld(const string& path) const {
-    // Salvataggio “semplice e tradizionale” via stream, usando Materia::toXML()
     ofstream out(path.c_str(), ios::out | ios::trunc);
     if (!out.is_open()) {
-        cerr << "Errore saveToFile(Materie): impossibile aprire '" << path << "'\n";
+        cerr << "Errore saveToFileOld(Materie): impossibile aprire '" << path << "'\n";
         return false;
     }
 
@@ -144,13 +134,222 @@ bool Materie::saveToFileOld(const string& path) const {
     out.close();
 
     if (!out.good()) {
-        cerr << "Errore saveToFile(Materie): errore in scrittura su '" << path << "'\n";
+        cerr << "Errore saveToFileOld(Materie): errore in scrittura su '" << path << "'\n";
         return false;
     }
 
     return true;
 }
 
+// ============================================
+// CARICAMENTO DA FILE CSV
+// ============================================
+bool Materie::loadFromCSV(const string& path) {
+    clear();
+
+    ifstream in(path.c_str(), ios::in);
+    if (!in.is_open()) {
+        cerr << "Errore loadFromCSV(Materie): impossibile aprire '" << path << "'\n";
+        return false;
+    }
+
+    string riga;
+    while (getline(in, riga)) {
+        if (riga.size() == 0) {
+            // salta righe vuote
+        }
+        else {
+            Materia* m = new Materia();
+            m->fromCSV(riga);
+
+            int id = m->getId();
+            if (esisteId(id)) {
+                cerr << "Warning loadFromCSV(Materie): ID duplicato (" << id << "), scarto\n";
+                delete m;
+            }
+            else {
+                items.push_back(m);
+            }
+        }
+    }
+
+    in.close();
+    return true;
+}
+
+// ============================================
+// SALVATAGGIO SU FILE CSV
+// ============================================
+bool Materie::saveToCSV(const string& path) const {
+    ofstream out(path.c_str(), ios::out | ios::trunc);
+    if (!out.is_open()) {
+        cerr << "Errore saveToCSV(Materie): impossibile aprire '" << path << "'\n";
+        return false;
+    }
+
+    for (size_t i = 0; i < items.size(); ++i) {
+        if (items[i] != nullptr) {
+            out << items[i]->toCSV() << "\n";
+        }
+    }
+
+    out.close();
+
+    if (!out.good()) {
+        cerr << "Errore saveToCSV(Materie): errore in scrittura su '" << path << "'\n";
+        return false;
+    }
+
+    return true;
+}
+
+// ============================================
+// CRUD - CREATE
+// ============================================
+bool Materie::aggiungi(Materia* materia) {
+    if (materia == nullptr) {
+        cerr << "Errore aggiungi(Materie): puntatore nullo\n";
+        return false;
+    }
+
+    if (esisteId(materia->getId())) {
+        cerr << "Errore aggiungi(Materie): ID " << materia->getId() << " gia esistente\n";
+        return false;
+    }
+
+    items.push_back(materia);
+    return true;
+}
+
+// ============================================
+// CRUD - READ
+// ============================================
+Materia* Materie::cercaPerId(int id) const {
+    for (size_t i = 0; i < items.size(); ++i) {
+        if (items[i] != nullptr && items[i]->getId() == id) {
+            return items[i];
+        }
+    }
+    return nullptr;
+}
+
+Materia* Materie::cercaPerNome(const string& nome) const {
+    for (size_t i = 0; i < items.size(); ++i) {
+        if (items[i] != nullptr && items[i]->getNome() == nome) {
+            return items[i];
+        }
+    }
+    return nullptr;
+}
+
+Materia* Materie::get(size_t index) const {
+    if (index < items.size()) {
+        return items[index];
+    }
+    return nullptr;
+}
+
+bool Materie::esisteId(int id) const {
+    bool trovato = false;
+
+    for (size_t i = 0; i < items.size() && !trovato; ++i) {
+        if (items[i] != nullptr && items[i]->getId() == id) {
+            trovato = true;
+        }
+    }
+
+    return trovato;
+}
+
+vector<Materia*> Materie::cercaLaboratori() const {
+    vector<Materia*> labs;
+
+    for (size_t i = 0; i < items.size(); ++i) {
+        if (items[i] != nullptr && items[i]->getLaboratorio()) {
+            labs.push_back(items[i]);
+        }
+    }
+
+    return labs;
+}
+
+// ============================================
+// CRUD - UPDATE
+// ============================================
+bool Materie::modifica(int id, Materia* nuovaMateria) {
+    if (nuovaMateria == nullptr) {
+        cerr << "Errore modifica(Materie): puntatore nullo\n";
+        return false;
+    }
+
+    for (size_t i = 0; i < items.size(); ++i) {
+        if (items[i] != nullptr && items[i]->getId() == id) {
+            delete items[i];
+            items[i] = nuovaMateria;
+
+            // Assicura ID coerente
+            nuovaMateria->setId(id);
+
+            return true;
+        }
+    }
+
+    cerr << "Errore modifica(Materie): ID " << id << " non trovato\n";
+    return false;
+}
+
+// ============================================
+// CRUD - DELETE
+// ============================================
+bool Materie::rimuoviPerId(int id) {
+    for (size_t i = 0; i < items.size(); ++i) {
+        if (items[i] != nullptr && items[i]->getId() == id) {
+            delete items[i];
+            items.erase(items.begin() + i);
+            return true;
+        }
+    }
+
+    cerr << "Errore rimuoviPerId(Materie): ID " << id << " non trovato\n";
+    return false;
+}
+
+bool Materie::rimuoviPerIndex(size_t index) {
+    if (index >= items.size()) {
+        cerr << "Errore rimuoviPerIndex(Materie): indice " << index << " fuori range\n";
+        return false;
+    }
+
+    if (items[index] != nullptr) {
+        delete items[index];
+    }
+
+    items.erase(items.begin() + index);
+    return true;
+}
+
+// ============================================
+// UTILITY - toXML (stringa)
+// ============================================
+string Materie::toXML() const {
+    string xml;
+
+    xml += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+    xml += "<Materie>\n";
+
+    for (size_t i = 0; i < items.size(); ++i) {
+        if (items[i] != nullptr) {
+            xml += "  " + items[i]->toXML() + "\n";
+        }
+    }
+
+    xml += "</Materie>\n";
+    return xml;
+}
+
+// ============================================
+// UTILITY - toString
+// ============================================
 string Materie::toString() const {
     string s;
 

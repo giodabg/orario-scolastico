@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Materie>
+
+	<Materia id="MAT-1">
+		<Nome>Matematica</Nome>
+	</Materia>
+
+	<Materia id="MAT-2">
+		<Nome>Italiano</Nome>
+	</Materia>
+
+</Materie>

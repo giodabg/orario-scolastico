@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Utenti>
+
+	<Utente id="UTE-1">
+		<Nome>Paolo</Nome>
+		<Cognome>Romano</Cognome>
+		<Username>p.romano</Username>
+		<Password>utente123</Password>
+		<Ruolo>USER</Ruolo>
+	</Utente>
+
+	<Utente id="UTE-2">
+		<Nome>Sara</Nome>
+		<Cognome>Galli</Cognome>
+		<Username>s.galli</Username>
+		<Password>utente456</Password>
+		<Ruolo>USER</Ruolo>
+	</Utente>
+
+	<Utente id="UTE-3">
+		<Nome>Admin</Nome>
+		<Cognome>Sistema</Cognome>
+		<Username>admin</Username>
+		<Password>admin</Password>
+		<Ruolo>ADMIN</Ruolo>
+	</Utente>
+
+</Utenti>

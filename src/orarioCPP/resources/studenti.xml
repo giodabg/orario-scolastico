@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Studenti>
+
+	<Studente id="STU-1">
+		<Nome>Mario</Nome>
+		<Cognome>Rossi</Cognome>
+		<Username>m.rossi</Username>
+		<Password>password123</Password>
+		<ClasseRef id="CLA-1"/>
+	</Studente>
+
+	<Studente id="STU-2">
+		<Nome>Giulia</Nome>
+		<Cognome>Bianchi</Cognome>
+		<Username>g.bianchi</Username>
+		<Password>abc123</Password>
+		<ClasseRef id="CLA-1"/>
+	</Studente>
+
+	<Studente id="STU-3">
+		<Nome>Luca</Nome>
+		<Cognome>Verdi</Cognome>
+		<Username>l.verdi</Username>
+		<Password>qwerty</Password>
+		<ClasseRef id="CLA-2"/>
+	</Studente>
+
+	<Studente id="STU-4">
+		<Nome>Anna</Nome>
+		<Cognome>Neri</Cognome>
+		<Username>a.neri</Username>
+		<Password>pass456</Password>
+		<ClasseRef id="CLA-2"/>
+	</Studente>
+
+</Studenti>
+

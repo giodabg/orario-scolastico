@@ -1,50 +1,59 @@
 #pragma once
-
 #include <string>
+#include <vector>
+#include "Utente.h"
 #include "tinyxml2.h"
+
+// Forward declarations
+class Classe;
+class Materia;
 
 using namespace std;
 using namespace tinyxml2;
 
-class Materia {
+class Docente : public Utente {
 private:
-    //Numero di classi che ha il professore
-    int numeroClassi;
-    //classi che ha il professore
-    List<Aula> classi = new List<Aula>();
-    //cognome del professore
-    string cognome;
-    //account del professore
-    Utente utente;
-    //orario del professore
-    Orario orario;
-    //materie che insegna il professore
-    List<Materia> materie = new List<Materia>();
+    // IDs per serializzazione
+    vector<int> classiIds;
+    vector<int> materieIds;
+
+    // Puntatori per uso runtime
+    vector<Classe*> classi;
+    vector<Materia*> materie;
+
 public:
+    // Costruttore di default
     Docente();
-    Docente(string cognome, int numeroClassi, Utente utente, Orario orario);
 
-    string getCognome() { return cognome; }
-    void setCognome(string n) { cognome = n; }
+    // Getter
+    const vector<int>& getClassiIds() const { return classiIds; }
+    const vector<int>& getMaterieIds() const { return materieIds; }
 
-    int getNumeroClassi() { return numeroClassi; }
-    void setNumeroClassi(int n) { numeroClassi = n; }
+    const vector<Classe*>& getClassi() const { return classi; }
+    const vector<Materia*>& getMaterie() const { return materie; }
 
-    Utente getUtente() { return utente; }
-    void setUtente(Utente u) { utente = u; }
+    // Setter
+    void addClasseId(int classId) { classiIds.push_back(classId); }
+    void addMateriaId(int matId) { materieIds.push_back(matId); }
 
-    Orario getOrario() { return orario; }
-    void setOrario(Orario o) { orario = o; }
+    void addClasse(Classe* c) { classi.push_back(c); }
+    void addMateria(Materia* m) { materie.push_back(m); }
 
-    List<Aula> getAule() { return classi; }
-    void aggiungiAula(Aula a);
+    // Metodi di risoluzione
+    void resolveClassi(const vector<Classe*>& tutteClassi);
+    void resolveMaterie(const vector<Materia*>& tutteMaterie);
 
-    List<Materia> getMaterie() { return materie; }
-    void aggiungiMateria(Materia m);
+    // Override metodi virtuali della classe base
+    string getTipoUtente() const override;
 
-    //Metodi XML
+    // Metodi XML
     static Docente* fromXML(XMLElement* docenteElem);
-    XMLElement* toXML(XMLDocument& doc);
-    string toXML();
-    string toString();
-    static string escapeXML(string& s);
+    XMLElement* toXML(XMLDocument& doc) const override;
+    // Metodi CSV
+    string toCSV() const override;
+    void fromCSV(const string& riga) override;
+
+    // utility
+    string toXML() const;
+    string toString() const override;
+};
